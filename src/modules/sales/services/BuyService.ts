@@ -1,0 +1,132 @@
+import { inject, injectable } from 'tsyringe';
+
+
+
+import IStockRepository from '../repositories/IStockRepository';
+import Purchase from '../infra/typeorm/schemas/Purchase';
+import IPurchaseRepository from '../repositories/IPurchaseRepository';
+import AppError from '@shared/errors/AppError'
+import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
+
+
+
+
+
+
+
+interface IRequest {
+  product: string,
+  quantity: number;
+  provider_id: string;
+  client_id: string;
+  type: 'client' | 'provider';
+
+
+}
+
+
+@injectable()
+class BuyService {
+  constructor(
+    @inject('StockRepository')
+    private stockRepository: IStockRepository,
+
+    @inject('PurchaseRepository')
+    private purchaseRepository: IPurchaseRepository,
+
+    @inject('CacheProvider')
+    private cacheProvider: ICacheProvider,
+
+
+  ) { }
+
+  public async run({ product, quantity, provider_id, client_id, type }: IRequest): Promise<Purchase> {
+
+    if (type === 'provider') {
+
+      throw new AppError('Unautorized acess ')
+    }
+
+
+    if (quantity <= 0) {
+
+      throw new AppError('invality imput')
+    }
+
+
+
+
+    const matchproduct = await this.stockRepository.matchProduct({
+      product,
+      provider_id
+    })
+
+    await this.cacheProvider.invalidatePrefix(`shopHistory-list`)
+
+    if (matchproduct === undefined) {
+
+
+      throw new AppError('unavaliable on stock', 401);
+
+
+
+    }
+
+
+
+    const newquantity = matchproduct.quantity - quantity
+    matchproduct.quantity = newquantity
+
+
+
+    await this.stockRepository.save(matchproduct)
+
+
+
+    if (matchproduct.quantity < 0) {
+
+
+      const newquantity = matchproduct.quantity + quantity
+      matchproduct.quantity = newquantity
+
+
+
+      await this.stockRepository.save(matchproduct)
+
+
+      throw new AppError('unavaliable on stock', 401)
+
+
+
+
+
+    }
+
+
+
+
+    const newprice = matchproduct.price * quantity
+
+    const status = 'avaliable'
+
+
+    const price = newprice
+
+    const transaction_id = await this.purchaseRepository.generateid()
+
+
+
+    Object.assign(matchproduct, { client_id, price, quantity, status, transaction_id })
+
+    return this.purchaseRepository.savePurchase(matchproduct)
+
+
+
+
+  }
+
+
+
+}
+
+export default BuyService;
