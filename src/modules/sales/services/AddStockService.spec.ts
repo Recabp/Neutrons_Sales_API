@@ -1,9 +1,9 @@
-import AppError from '@shared/errors/AppError';
 import 'reflect-metadata';
 
 import FakeStockRepository from '../repositories/fakes/FakeStockRepository';
 import FakeCacheRepository from '@shared/container/providers/CacheProvider/fakes/FakecacheProvider'
 import AddStockService from './AddStockService';
+import AppError from '@shared/errors/AppError';
 
 
 

@@ -1,13 +1,18 @@
 import { Request, Response, NextFunction } from 'express';
-import { verify } from 'jsonwebtoken';
+import { verify, decode } from 'jsonwebtoken';
 import authConfig from '@config/authconfig';
 import AppError from '@shared/errors/AppError';
+import { formatDiagnosticsWithColorAndContext } from 'typescript';
 
 interface TokenPayload {
   iat: number;
   exp: number;
   sub: string;
+  type: 'client' | 'provider';
+
 }
+
+
 
 export default function ensureAuthenticated(
   request: Request,
@@ -25,10 +30,18 @@ export default function ensureAuthenticated(
   try {
     const decoded = verify(token, authConfig.jwt.secret);
 
+    const decodedPayload = decode(token)
+
+
+    const { type } = decodedPayload as TokenPayload
+
+
     const { sub } = decoded as TokenPayload;
+
 
     request.user = {
       id: sub,
+      type: type,
     };
 
     return next();

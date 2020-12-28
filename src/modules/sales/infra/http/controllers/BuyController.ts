@@ -8,9 +8,12 @@ import BuyService from '@modules/sales/services/BuyService';
 export default class BuyController {
   public async create(request: Request, response: Response): Promise<Response> {
     const { product, quantity } = request.body;
-    const provider_id = request.params.id
-    const client_id = request.user.id
-    const type = request.user.type
+    const provider_id = request.params.id;
+    const client_id = request.user.id;
+    const type = request.user.type;
+
+
+    console.log(type)
 
 
 

@@ -4,9 +4,10 @@ import FakeUsersRepository from '../repositories/fakes/FakeUsersRepository';
 import CreateUserService from './CreateUserService';
 import AppError from '@shared/errors/AppError';
 import FakeHashProvider from '../providers/HashProvider/fakes/FakeHashProvider';
+import FakeCacheRepository from '@shared/container/providers/CacheProvider/fakes/FakecacheProvider'
 
 
-
+let cacheRepository: FakeCacheRepository;
 let fakeUsersRepository: FakeUsersRepository;
 let fakeHashProvider: FakeHashProvider;
 let createUser: CreateUserService;
@@ -16,7 +17,7 @@ describe('CreateUser', () => {
 
     fakeUsersRepository = new FakeUsersRepository();
     fakeHashProvider = new FakeHashProvider();
-    createUser = new CreateUserService(fakeUsersRepository, fakeHashProvider);
+    createUser = new CreateUserService(fakeUsersRepository, fakeHashProvider, cacheRepository);
 
 
   });
@@ -31,6 +32,10 @@ describe('CreateUser', () => {
       password: '123456',
 
     });
+
+
+
+
 
     expect(user).toHaveProperty('id');
     ;
