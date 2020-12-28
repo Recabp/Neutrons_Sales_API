@@ -1,9 +1,11 @@
 import { inject, injectable } from 'tsyringe';
 
-import User from '@modules/users/infra/typeorm/entities/User';
+import IUserWhithoutPasswordDTO from '@modules/users/dtos/IUserWhithoutPasswordDTO';
 import AppError from '@shared/errors/AppError';
 import IUsersRepository from '../repositories/IUsersRepository';
 import IHashProvider from '../providers/HashProvider/models/IHashProvider';
+import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
+
 
 
 
@@ -27,11 +29,14 @@ class CreateUserService {
     @inject('HashProvider')
     private hashProvider: IHashProvider,
 
+    @inject('CacheProvider')
+    private cacheProvider: ICacheProvider,
+
 
 
   ) { }
 
-  public async run({ name, email, type, password }: IRequest): Promise<User> {
+  public async run({ name, email, type, password }: IRequest): Promise<IUserWhithoutPasswordDTO> {
 
 
     const checkUserExists = await this.usersRepository.findByEmail(email)
@@ -49,7 +54,29 @@ class CreateUserService {
     });
 
 
+    if (user.type === 'provider') {
 
+
+
+      const userWithoutPassword = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        type: user.type,
+        created_at: user.created_at,
+        updated_at: user.updated_at,
+      };
+
+
+
+
+
+
+      await this.cacheProvider.save(`provider-list: ${user.id}`, userWithoutPassword);
+
+      return user;
+
+    }
 
 
     return user;

@@ -1,22 +1,22 @@
-import AppError from '@shared/errors/AppError';
 import 'reflect-metadata';
 
 
 import FakeUsersRepository from '../repositories/fakes/FakeUsersRepository';
+import FakeCacheRepository from '@shared/container/providers/CacheProvider/fakes/FakecacheProvider';
 import ListProvidersService from './ListProvidersService';
 
 
 
-
+let fakeCacheRepository: FakeCacheRepository;
 let fakeUsersRepository: FakeUsersRepository;
 let listProvidersService: ListProvidersService;
 
 
 describe('CreateUser', () => {
   beforeEach(() => {
-
+    fakeCacheRepository = new FakeCacheRepository();
     fakeUsersRepository = new FakeUsersRepository();
-    listProvidersService = new ListProvidersService(fakeUsersRepository);
+    listProvidersService = new ListProvidersService(fakeUsersRepository, fakeCacheRepository);
 
 
 

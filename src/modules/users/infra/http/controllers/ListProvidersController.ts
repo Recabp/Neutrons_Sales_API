@@ -22,6 +22,8 @@ export default class ListProvidersControllers {
 
 
 
+
+
     return response.json(classToClass(providerList));
 
   }

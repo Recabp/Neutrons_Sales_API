@@ -12,7 +12,7 @@ class UsersRepository implements IUsersRepository {
     this.ormRepository = getRepository(User);
   }
 
-  public async listProvider(type: string): Promise<User[] | undefined> {
+  public async listProvider(type: string): Promise<User[]> {
     const user = await this.ormRepository.find({
       where: { type: 'provider' }
     });
@@ -50,6 +50,8 @@ class UsersRepository implements IUsersRepository {
   public async save(user: User): Promise<User> {
     return this.ormRepository.save(user);
   }
+
+
 }
 
 export default UsersRepository;
