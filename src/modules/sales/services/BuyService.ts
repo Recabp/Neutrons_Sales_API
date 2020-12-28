@@ -21,7 +21,6 @@ interface IRequest {
   client_id: string;
   type: 'client' | 'provider';
 
-
 }
 
 
