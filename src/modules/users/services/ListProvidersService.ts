@@ -8,16 +8,10 @@ import IUserWhithoutPasswordDTO from '../dtos/IUserWhithoutPasswordDTO';
 
 
 
-
-
 interface IRequest {
   user_id: string;
 
 }
-
-
-
-
 
 
 
@@ -34,14 +28,17 @@ class ListProviderService {
 
   ) { }
 
-  public async run({ user_id }: IRequest): Promise<User[] | IUserWhithoutPasswordDTO[]> {
+  public async run({ user_id }: IRequest): Promise<IUserWhithoutPasswordDTO[]> {
 
-    let list = await this.cacheProvider.recover<User[]>(`provider-list: ${user_id}`);
+    let list = await this.cacheProvider.recover<IUserWhithoutPasswordDTO[]>(`providers-list: ${user_id}`);
 
 
-    if (!list) {
+
+    if (list === null) {
 
       list = await this.usersRepository.listProvider(user_id);
+
+      await this.cacheProvider.save(`providers-list: ${user_id}`, list)
 
     }
 

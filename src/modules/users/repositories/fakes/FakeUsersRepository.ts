@@ -4,6 +4,7 @@ import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import ICreateUserDTO from '@modules/users/dtos/ICreateUserDTO';
 import User from '../../infra/typeorm/entities/User';
 import { uuid } from 'uuidv4';
+import IUserWhithoutPasswordDTO from '@modules/users/dtos/IUserWhithoutPasswordDTO';
 
 class FakeUsersRepository implements IUsersRepository {
   private users: User[] = [];
@@ -58,6 +59,23 @@ class FakeUsersRepository implements IUsersRepository {
     return user;
 
   }
+
+
+  public async excludePassword(user: User): Promise<IUserWhithoutPasswordDTO> {
+    const userWithoutPassword = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      type: user.type,
+
+    };
+
+    return userWithoutPassword
+
+
+  }
+
+
 }
 
 export default FakeUsersRepository;

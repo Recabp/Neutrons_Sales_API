@@ -54,23 +54,13 @@ class CreateUserService {
     });
 
 
+
     if (user.type === 'provider') {
 
 
 
-      const userWithoutPassword = {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        type: user.type,
+      await this.cacheProvider.invalidatePrefix(`providers-list`)
 
-      };
-
-      console.log(userWithoutPassword)
-
-
-
-      await this.cacheProvider.save(`provider-list: ${user.id}`, userWithoutPassword);
 
       return user;
 

@@ -7,7 +7,7 @@ import FakeHashProvider from '../providers/HashProvider/fakes/FakeHashProvider';
 import FakeCacheRepository from '@shared/container/providers/CacheProvider/fakes/FakecacheProvider'
 
 
-let cacheRepository: FakeCacheRepository;
+let fakecacheRepository: FakeCacheRepository;
 let fakeUsersRepository: FakeUsersRepository;
 let fakeHashProvider: FakeHashProvider;
 let createUser: CreateUserService;
@@ -15,9 +15,10 @@ let createUser: CreateUserService;
 describe('CreateUser', () => {
   beforeEach(() => {
 
+    fakecacheRepository = new FakeCacheRepository();
     fakeUsersRepository = new FakeUsersRepository();
     fakeHashProvider = new FakeHashProvider();
-    createUser = new CreateUserService(fakeUsersRepository, fakeHashProvider, cacheRepository);
+    createUser = new CreateUserService(fakeUsersRepository, fakeHashProvider, fakecacheRepository);
 
 
   });

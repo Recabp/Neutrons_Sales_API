@@ -3,6 +3,7 @@ import { getRepository, Repository } from 'typeorm';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository'
 import ICreateUserDTO from '@modules/users/dtos/ICreateUserDTO'
 import User from '../entities/User'
+import IUserWhithoutPasswordDTO from '@modules/users/dtos/IUserWhithoutPasswordDTO';
 
 
 class UsersRepository implements IUsersRepository {
@@ -12,12 +13,16 @@ class UsersRepository implements IUsersRepository {
     this.ormRepository = getRepository(User);
   }
 
-  public async listProvider(type: string): Promise<User[]> {
+  public async listProvider(type: string): Promise<IUserWhithoutPasswordDTO[]> {
     const user = await this.ormRepository.find({
       where: { type: 'provider' }
     });
 
-    return user;
+
+    const userwhithoutPassword = user.map(({ password, ...keep }) => keep)
+
+
+    return userwhithoutPassword;
 
   }
 
@@ -50,6 +55,7 @@ class UsersRepository implements IUsersRepository {
   public async save(user: User): Promise<User> {
     return this.ormRepository.save(user);
   }
+
 
 
 }

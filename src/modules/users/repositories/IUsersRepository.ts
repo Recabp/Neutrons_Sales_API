@@ -1,5 +1,6 @@
 import User from '../infra/typeorm/entities/User';
 import ICreateUserDTO from '../dtos/ICreateUserDTO';
+import IUserWhithoutPasswordDTO from '../dtos/IUserWhithoutPasswordDTO';
 
 
 
@@ -7,7 +8,7 @@ import ICreateUserDTO from '../dtos/ICreateUserDTO';
 export default interface IUsersRepository {
   findByEmail(email: string): Promise<User | undefined>;
   findById(id: string): Promise<User | undefined>;
-  listProvider(id: string): Promise<User[]>;
+  listProvider(id: string): Promise<IUserWhithoutPasswordDTO[]>;
   create(data: ICreateUserDTO): Promise<User>;
   save(user: User): Promise<User>;
 
