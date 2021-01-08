@@ -10,7 +10,6 @@ export default class UpdateProfileControllers {
     const user_id = request.user.id
 
 
-
     const updateUser = container.resolve(UpdateProfileService);
 
     const user = await updateUser.run({

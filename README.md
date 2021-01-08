@@ -14,7 +14,7 @@ O usuário logado só pode cancelar pedidos realizados por ele.
 
 # CreateUser    /users
 
-- deve cruar um usuario recebendo: nome, email, type("client" | "provider") e password
+- deve criar um usuario recebendo: nome, email, type("client" | "provider") e password
 
 # SendForgotPassword  /password/forgot
 
@@ -34,7 +34,7 @@ O usuário logado só pode cancelar pedidos realizados por ele.
 
 # AddStock   /addstock
 
-- deve adicionar stock recebendo: product, quantity, type, price
+- deve adicionar stock recebendo: product, quantity, type, price e um token valido
 
 # ListStock   /liststock
 
@@ -46,19 +46,34 @@ O usuário logado só pode cancelar pedidos realizados por ele.
 
 # Buy   /buy/id
 
-- O usuario deve conseguir comprar recebendo: um token valido e o provider id na url
+- O usuario deve conseguir comprar recebendo: quantity, product, type, um token valido e o provider id na url
 
 # CancelPurchase   /cancel/id
 
-- O usuario deve conseguir cancelar a compra recebendo: um token valido, product, quantity, type e o user id na url
+- O usuario deve conseguir cancelar a compra recebendo: o user id na url
 
-# ShophiStory  /shophistory/id
+# ShopHistory  /shophistory/id
 
 - O usuario deve conseguir listar o historico de compras recebendo: um token valido e o user id na url
 
 # CustumerOrder  /custumerorder/id
 
 - deve listar os pedidos dos clientes recebendo: um token valido e o provider id na url
+
+
+# Docker images
+
+-Mongo
+
+sudo docker run --name neutronsmongo -p 27017:27017 -d -t mongo
+
+-Redis
+
+sudo docker run --name redis -p 6379:6379 -d -t redis:alpine
+
+-Postgres
+
+docker run --name gostack -e POSTGRES_PASSWORD=password -d postgres -p 5432:5432
 
 
 

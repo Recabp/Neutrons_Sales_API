@@ -42,7 +42,7 @@ class UpdateProfile {
     user.email = email;
 
     if (password && !old_password) {
-      throw new AppError('You nedd to inform the old password to change the password.')
+      throw new AppError('You need to inform the old password to change the password.')
     }
 
 

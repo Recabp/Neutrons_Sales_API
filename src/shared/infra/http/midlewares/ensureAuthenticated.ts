@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { verify, decode } from 'jsonwebtoken';
 import authConfig from '@config/authconfig';
 import AppError from '@shared/errors/AppError';
-import { formatDiagnosticsWithColorAndContext } from 'typescript';
+
 
 interface TokenPayload {
   iat: number;
