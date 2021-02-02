@@ -7,6 +7,8 @@ import Purchase from '../infra/typeorm/schemas/Purchase';
 import IPurchaseRepository from '../repositories/IPurchaseRepository';
 import AppError from '@shared/errors/AppError'
 import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
+import IQueueProvider from '@shared/container/providers/QueueProvider/models/IQueueProvider';
+
 
 
 
@@ -35,6 +37,9 @@ class BuyService {
 
     @inject('CacheProvider')
     private cacheProvider: ICacheProvider,
+
+    @inject('QueueProvider')
+    private queueProvider: IQueueProvider,
 
 
   ) { }
