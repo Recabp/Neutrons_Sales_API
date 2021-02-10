@@ -1,4 +1,5 @@
-import { Connection, Channel, connect } from "amqplib";
+import AppError from "@shared/errors/AppError";
+import { Connection, Channel, connect, Message } from "amqplib";
 
 
 
@@ -20,6 +21,16 @@ export default class RabbitmqQueueProvider {
 
   async publishOnQueue(queue: string, message: any) {
     return this.channel.sendToQueue(queue, Buffer.from(JSON.stringify(message)));
+  }
+
+  async consumeQueue(queue: string, callback: (massage: Message) => void) {
+    return this.channel.consume(queue, (message) => {
+      if (message === null)
+        throw new AppError('invalide message content')
+
+      callback(message);
+      this.channel.ack(message);
+    })
   }
 
 
