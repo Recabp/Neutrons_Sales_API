@@ -13,11 +13,7 @@ import cancelPurchaseRouter from '@modules/sales/infra/http/routes/cancelPurchas
 import listCustomerRouter from '@modules/sales/infra/http/routes/listCustomerOrder.routes';
 import listShopHistoryRouter from '@modules/sales/infra/http/routes/listShopHistory.routes';
 
-
-
-
 const routes = Router();
-
 
 routes.use('/list', listprovidersRouter);
 routes.use('/users', usersRouter);
@@ -31,8 +27,5 @@ routes.use('/buy', buyProductsRouter);
 routes.use('/cancel', cancelPurchaseRouter);
 routes.use('/shophistory', listShopHistoryRouter);
 routes.use('/custumerorder', listCustomerRouter);
-
-
-
 
 export default routes;

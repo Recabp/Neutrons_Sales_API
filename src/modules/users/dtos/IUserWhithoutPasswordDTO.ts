@@ -5,5 +5,4 @@ export default interface IUserWhithoutPasswordDTO {
   created_at?: Date;
   updated_at?: Date;
   email: string;
-
-};
+}

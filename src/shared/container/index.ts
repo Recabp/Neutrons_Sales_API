@@ -1,9 +1,7 @@
 import { container } from 'tsyringe';
 
-
 import '@modules/users/providers';
-import './providers'
-
+import './providers';
 
 import UsersRepository from '@modules/users/infra/typeorm/repositories/UsersRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
@@ -20,26 +18,27 @@ import IPurchaseRepository from '@modules/sales/repositories/IPurchaseRepository
 import InotificationsRepository from '@modules/notifications/repositories/INotificationsRepository';
 import NotificationsReposytory from '@modules/notifications/infra/typeorm/repositories/NotificationsRepository';
 
-
-
-
-
-
-
 container.registerSingleton<IUsersRepository>(
-  'UsersRepository', UsersRepository);
-
+  'UsersRepository',
+  UsersRepository,
+);
 
 container.registerSingleton<IUserTokensReposytory>(
-  'UserTokensRepository', UserTokensRepository);
+  'UserTokensRepository',
+  UserTokensRepository,
+);
 
 container.registerSingleton<IStockRepository>(
-  'StockRepository', StockRepository);
+  'StockRepository',
+  StockRepository,
+);
 
 container.registerSingleton<IPurchaseRepository>(
-  'PurchaseRepository', PurchaseRepository);
+  'PurchaseRepository',
+  PurchaseRepository,
+);
 
 container.registerSingleton<InotificationsRepository>(
-  'NotificationsRepository', NotificationsReposytory);
-
-
+  'NotificationsRepository',
+  NotificationsReposytory,
+);

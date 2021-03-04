@@ -1,27 +1,17 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
-import { classToClass } from 'class-transformer'
+import { classToClass } from 'class-transformer';
 
 import BuyService from '@modules/sales/services/BuyService';
-
 
 export default class BuyController {
   public async create(request: Request, response: Response): Promise<Response> {
     const { product, quantity } = request.body;
     const provider_id = request.params.id;
     const client_id = request.user.id;
-    const type = request.user.type;
+    const { type } = request.user;
 
-
-    console.log(type)
-
-
-
-
-
-
-
-
+    console.log(type);
 
     const buyproduct = container.resolve(BuyService);
 
@@ -30,16 +20,9 @@ export default class BuyController {
       quantity,
       provider_id,
       client_id,
-      type
-
+      type,
     });
 
-
-
-
-
-
-    return response.json(classToClass(newproduct),);
-
+    return response.json(classToClass(newproduct));
   }
 }

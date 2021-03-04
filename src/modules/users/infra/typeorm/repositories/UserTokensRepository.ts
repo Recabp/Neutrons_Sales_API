@@ -1,6 +1,6 @@
 import { getRepository, Repository } from 'typeorm';
 
-import IUserTokensRepository from '@modules/users/repositories/IUserTokensRepository'
+import IUserTokensRepository from '@modules/users/repositories/IUserTokensRepository';
 import UserToken from '../entities/UserToken';
 
 class UserTokensRepository implements IUserTokensRepository {
@@ -25,10 +25,11 @@ class UserTokensRepository implements IUserTokensRepository {
 
     try {
       await this.ormRepository.save(userToken);
-    } catch (err) { console.log(err) }
+    } catch (err) {
+      console.log(err);
+    }
     return userToken;
   }
-
-};
+}
 
 export default UserTokensRepository;

@@ -1,11 +1,9 @@
-
 import { inject, injectable } from 'tsyringe';
 
-import IUsersRepository from '../repositories/IUsersRepository';
 import User from '@modules/users/infra/typeorm/entities/User';
 import AppError from '@shared/errors/AppError';
+import IUsersRepository from '../repositories/IUsersRepository';
 import IHashProvider from '../providers/HashProvider/models/IHashProvider';
-
 
 interface IRequest {
   user_id: string;
@@ -23,43 +21,50 @@ class UpdateProfile {
 
     @inject('HashProvider')
     private hashProvider: IHashProvider,
-  ) { }
+  ) {}
 
-  public async run({ name, email, user_id, password, old_password }: IRequest): Promise<User> {
+  public async run({
+    name,
+    email,
+    user_id,
+    password,
+    old_password,
+  }: IRequest): Promise<User> {
     const user = await this.usersRepository.findById(user_id);
 
     if (!user) {
-      throw new AppError('User not found.')
+      throw new AppError('User not found.');
     }
 
     const userWithUpdatedEmail = await this.usersRepository.findByEmail(email);
 
     if (userWithUpdatedEmail && userWithUpdatedEmail.id !== user_id) {
-      throw new AppError('Email already in use.')
+      throw new AppError('Email already in use.');
     }
 
     user.name = name;
     user.email = email;
 
     if (password && !old_password) {
-      throw new AppError('You need to inform the old password to change the password.')
+      throw new AppError(
+        'You need to inform the old password to change the password.',
+      );
     }
 
-
-
     if (password && old_password) {
-      const checkOldPassword = await this.hashProvider.compareHash(old_password, user.password);
+      const checkOldPassword = await this.hashProvider.compareHash(
+        old_password,
+        user.password,
+      );
 
       if (!checkOldPassword) {
-        throw new AppError('Wrong old password')
+        throw new AppError('Wrong old password');
       }
 
-      user.password = await this.hashProvider.generateHash(password)
+      user.password = await this.hashProvider.generateHash(password);
     }
 
     return this.usersRepository.save(user);
-
-
   }
 }
 

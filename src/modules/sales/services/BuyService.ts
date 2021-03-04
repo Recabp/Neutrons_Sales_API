@@ -1,30 +1,19 @@
 import { inject, injectable } from 'tsyringe';
 
-
-
+import AppError from '@shared/errors/AppError';
+import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
+import IQueueProvider from '@shared/container/providers/QueueProvider/models/IQueueProvider';
 import IStockRepository from '../repositories/IStockRepository';
 import Purchase from '../infra/typeorm/schemas/Purchase';
 import IPurchaseRepository from '../repositories/IPurchaseRepository';
-import AppError from '@shared/errors/AppError'
-import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
-import IQueueProvider from '@shared/container/providers/QueueProvider/models/IQueueProvider';
-
-
-
-
-
-
-
 
 interface IRequest {
-  product: string,
+  product: string;
   quantity: number;
   provider_id: string;
   client_id: string;
   type: 'client' | 'provider';
-
 }
-
 
 @injectable()
 class BuyService {
@@ -37,100 +26,66 @@ class BuyService {
 
     @inject('CacheProvider')
     private cacheProvider: ICacheProvider,
+  ) {}
 
-    @inject('QueueProvider')
-    private queueProvider: IQueueProvider,
-
-
-  ) { }
-
-  public async run({ product, quantity, provider_id, client_id, type }: IRequest): Promise<Purchase> {
-
+  public async run({
+    product,
+    quantity,
+    provider_id,
+    client_id,
+    type,
+  }: IRequest): Promise<Purchase> {
     if (type === 'provider') {
-
-      throw new AppError('Unautorized acess ')
+      throw new AppError('Unautorized acess ');
     }
-
 
     if (quantity <= 0) {
-
-      throw new AppError('invality imput')
+      throw new AppError('invality imput');
     }
-
-
-
 
     const matchproduct = await this.stockRepository.matchProduct({
       product,
-      provider_id
-    })
+      provider_id,
+    });
 
-    await this.cacheProvider.invalidatePrefix(`shopHistory-list`)
+    await this.cacheProvider.invalidatePrefix(`shopHistory-list`);
 
     if (matchproduct === undefined) {
-
-
       throw new AppError('unavaliable on stock', 401);
-
-
-
     }
 
+    const newquantity = matchproduct.quantity - quantity;
+    matchproduct.quantity = newquantity;
 
-
-    const newquantity = matchproduct.quantity - quantity
-    matchproduct.quantity = newquantity
-
-
-
-    await this.stockRepository.save(matchproduct)
-
-
+    await this.stockRepository.save(matchproduct);
 
     if (matchproduct.quantity < 0) {
+      const newquantity = matchproduct.quantity + quantity;
+      matchproduct.quantity = newquantity;
 
+      await this.stockRepository.save(matchproduct);
 
-      const newquantity = matchproduct.quantity + quantity
-      matchproduct.quantity = newquantity
-
-
-
-      await this.stockRepository.save(matchproduct)
-
-
-      throw new AppError('unavaliable on stock', 401)
-
-
-
-
-
+      throw new AppError('unavaliable on stock', 401);
     }
 
+    const newprice = matchproduct.price * quantity;
 
+    const status = 'avaliable';
 
+    const price = newprice;
 
-    const newprice = matchproduct.price * quantity
+    const transaction_id = await this.purchaseRepository.generateid();
 
-    const status = 'avaliable'
+    Object.assign(matchproduct, {
+      client_id,
+      price,
+      quantity,
+      status,
+      transaction_id,
+    });
 
-
-    const price = newprice
-
-    const transaction_id = await this.purchaseRepository.generateid()
-
-
-
-    Object.assign(matchproduct, { client_id, price, quantity, status, transaction_id })
-
-    return this.purchaseRepository.savePurchase(matchproduct)
-
-
-
-
+    return this.purchaseRepository.savePurchase(matchproduct);
   }
-
-
-
 }
 
 export default BuyService;

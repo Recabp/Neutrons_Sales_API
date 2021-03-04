@@ -1,24 +1,17 @@
 import { inject, injectable } from 'tsyringe';
 
-
 import Stock from '@modules/sales/infra/typeorm/schemas/Stock';
-import IStockRepository from '../repositories/IStockRepository';
 import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
-import AppError from '@shared/errors/AppError'
-
-
-
-
-
+import AppError from '@shared/errors/AppError';
+import IStockRepository from '../repositories/IStockRepository';
 
 interface IRequest {
-  product: string,
+  product: string;
   quantity: number;
   provider_id: string;
   price: number;
   type: 'client' | 'provider';
 }
-
 
 @injectable()
 class AddStockService {
@@ -28,36 +21,33 @@ class AddStockService {
 
     @inject('CacheProvider')
     private cacheProvider: ICacheProvider,
+  ) {}
 
-  ) { }
-
-  public async run({ product, quantity, provider_id, price, type }: IRequest): Promise<Stock> {
-
+  public async run({
+    product,
+    quantity,
+    provider_id,
+    price,
+    type,
+  }: IRequest): Promise<Stock> {
     if (type === 'client') {
-
-      throw new AppError('Unautorized acess ')
+      throw new AppError('Unautorized acess ');
     }
 
     if (quantity <= 0) {
-
-      throw new AppError('invality imput')
+      throw new AppError('invality imput');
     }
 
     if (price <= 0) {
-
-      throw new AppError('invality imput')
+      throw new AppError('invality imput');
     }
-
 
     const matchproduct = await this.stockRepository.matchProduct({
       product,
-      provider_id
-    })
-
-
+      provider_id,
+    });
 
     if (matchproduct === undefined) {
-
       const matchproduct = await this.stockRepository.addStock({
         product,
         quantity,
@@ -65,29 +55,16 @@ class AddStockService {
         price,
       });
 
-
-
-      return (matchproduct);
-
-
+      return matchproduct;
     }
 
+    const newquantity = matchproduct.quantity + quantity;
+    matchproduct.quantity = newquantity;
 
-    const newquantity = matchproduct.quantity + quantity
-    matchproduct.quantity = newquantity
+    await this.cacheProvider.invalidatePrefix(`stock-list`);
 
-    await this.cacheProvider.invalidatePrefix(`stock-list`)
-
-
-    return this.stockRepository.save(matchproduct)
-
-
-
-
+    return this.stockRepository.save(matchproduct);
   }
-
-
-
 }
 
 export default AddStockService;

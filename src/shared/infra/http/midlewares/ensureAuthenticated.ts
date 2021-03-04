@@ -3,16 +3,12 @@ import { verify, decode } from 'jsonwebtoken';
 import authConfig from '@config/authconfig';
 import AppError from '@shared/errors/AppError';
 
-
 interface TokenPayload {
   iat: number;
   exp: number;
   sub: string;
   type: 'client' | 'provider';
-
 }
-
-
 
 export default function ensureAuthenticated(
   request: Request,
@@ -30,18 +26,15 @@ export default function ensureAuthenticated(
   try {
     const decoded = verify(token, authConfig.jwt.secret);
 
-    const decodedPayload = decode(token)
+    const decodedPayload = decode(token);
 
-
-    const { type } = decodedPayload as TokenPayload
-
+    const { type } = decodedPayload as TokenPayload;
 
     const { sub } = decoded as TokenPayload;
 
-
     request.user = {
       id: sub,
-      type: type,
+      type,
     };
 
     return next();

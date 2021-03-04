@@ -8,8 +8,6 @@ export default class UsersControllers {
   public async create(request: Request, response: Response): Promise<Response> {
     const { name, email, password, type } = request.body;
 
-
-
     const createUser = container.resolve(CreateUserService);
 
     const user = await createUser.run({
@@ -19,12 +17,6 @@ export default class UsersControllers {
       password,
     });
 
-
-    
-
-
-
     return response.json(classToClass(user));
-
   }
 }

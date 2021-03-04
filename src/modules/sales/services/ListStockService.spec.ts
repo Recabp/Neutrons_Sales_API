@@ -1,24 +1,15 @@
 import 'reflect-metadata';
 
-import FakeStockRepository from '../repositories/fakes/FakeStockRepository';
 import FakeCacheRepository from '@shared/container/providers/CacheProvider/fakes/FakecacheProvider';
+import AppError from '@shared/errors/AppError';
+import FakeStockRepository from '../repositories/fakes/FakeStockRepository';
 import ListStockService from './ListStockService';
 import AddStockService from './AddStockService';
-import AppError from '@shared/errors/AppError';
-
-
-
-
 
 let fakeCacheRepository: FakeCacheRepository;
 let fakeStockRepository: FakeStockRepository;
 let listStock: ListStockService;
 let addStock: AddStockService;
-
-
-
-
-
 
 describe('ListStock', () => {
   beforeEach(() => {
@@ -26,17 +17,12 @@ describe('ListStock', () => {
     fakeStockRepository = new FakeStockRepository();
     addStock = new AddStockService(fakeStockRepository, fakeCacheRepository);
     listStock = new ListStockService(fakeStockRepository, fakeCacheRepository);
-
-
   });
 
-
   it('should be able to list the stock', async () => {
-
     const id = 'asdasdasdasdasd';
     const provider_id = id;
     const type = 'provider';
-
 
     const product1 = await addStock.run({
       product: 'caldo de cana',
@@ -54,40 +40,21 @@ describe('ListStock', () => {
       price: 3,
     });
 
+    const list = await listStock.run({ provider_id, type });
 
-
-    const list = await listStock.run({ provider_id, type })
-
-
-
-    expect(list).toEqual([product1, product2])
-
-
-
-
-
+    expect(list).toEqual([product1, product2]);
   });
-
 
   it('Client should not able to list the stock', async () => {
+    const id = 'asdasdasdasdasd';
+    const provider_id = id;
+    const type = 'client';
 
-    const id = 'asdasdasdasdasd'
-    const provider_id = id
-    const type = 'client'
-
-
-
-    await expect(listStock.run({
-      provider_id,
-      type,
-
-    })).rejects.toBeInstanceOf(AppError)
-
-
+    await expect(
+      listStock.run({
+        provider_id,
+        type,
+      }),
+    ).rejects.toBeInstanceOf(AppError);
   });
-
-
-
-
-
 });

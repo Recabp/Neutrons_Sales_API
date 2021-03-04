@@ -1,9 +1,8 @@
 import handlebars from 'handlebars';
 import fs from 'fs';
 
-import IParseMailTempleteDTO from "../dtos/IParseMailTemplateDTO";
-import IMailTemplateProvider from "../models/IMailTemplateProvider";
-
+import IParseMailTempleteDTO from '../dtos/IParseMailTemplateDTO';
+import IMailTemplateProvider from '../models/IMailTemplateProvider';
 
 class HandlebarsMailTemplateProvider implements IMailTemplateProvider {
   public async parse({
@@ -16,8 +15,7 @@ class HandlebarsMailTemplateProvider implements IMailTemplateProvider {
 
     const parseTemplate = handlebars.compile(templateFileContent);
 
-    return parseTemplate(variables)
-
+    return parseTemplate(variables);
   }
 }
 

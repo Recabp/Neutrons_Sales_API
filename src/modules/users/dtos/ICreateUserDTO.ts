@@ -3,4 +3,4 @@ export default interface ICreateUserDTO {
   email: string;
   type: 'client' | 'provider';
   password: string;
-};
+}

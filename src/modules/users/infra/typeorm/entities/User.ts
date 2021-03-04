@@ -1,5 +1,9 @@
 import {
-  Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn,
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 
@@ -28,7 +32,6 @@ class User {
   @UpdateDateColumn()
   @Exclude()
   updated_at: Date;
-
 }
 
 export default User;

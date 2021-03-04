@@ -1,16 +1,21 @@
-import { Exclude } from "class-transformer";
-import { ObjectID, Entity, Column, CreateDateColumn, UpdateDateColumn, ObjectIdColumn } from "typeorm";
+import { Exclude } from 'class-transformer';
+import {
+  ObjectID,
+  Entity,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ObjectIdColumn,
+} from 'typeorm';
 
 @Entity('stock')
 class Stock {
-
   @ObjectIdColumn()
   @Exclude()
   id: ObjectID;
 
   @Column()
   provider_id: string;
-
 
   @Column()
   product: string;
@@ -26,11 +31,6 @@ class Stock {
 
   @UpdateDateColumn()
   updated_at: Date;
-
-
-
 }
 
-
 export default Stock;
-

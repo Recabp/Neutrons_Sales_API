@@ -2,23 +2,16 @@ import { inject, injectable } from 'tsyringe';
 
 import IUserWhithoutPasswordDTO from '@modules/users/dtos/IUserWhithoutPasswordDTO';
 import AppError from '@shared/errors/AppError';
+import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
 import IUsersRepository from '../repositories/IUsersRepository';
 import IHashProvider from '../providers/HashProvider/models/IHashProvider';
-import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
-
-
-
-
-
 
 interface IRequest {
-  name: string,
+  name: string;
   email: string;
   type: 'client' | 'provider';
   password: string;
 }
-
-
 
 @injectable()
 class CreateUserService {
@@ -31,15 +24,15 @@ class CreateUserService {
 
     @inject('CacheProvider')
     private cacheProvider: ICacheProvider,
+  ) {}
 
-
-
-  ) { }
-
-  public async run({ name, email, type, password }: IRequest): Promise<IUserWhithoutPasswordDTO> {
-
-
-    const checkUserExists = await this.usersRepository.findByEmail(email)
+  public async run({
+    name,
+    email,
+    type,
+    password,
+  }: IRequest): Promise<IUserWhithoutPasswordDTO> {
+    const checkUserExists = await this.usersRepository.findByEmail(email);
     if (checkUserExists) {
       throw new AppError('This email is already used');
     }
@@ -53,27 +46,14 @@ class CreateUserService {
       password: hashedPassword,
     });
 
-
-
     if (user.type === 'provider') {
-
-
-
-      await this.cacheProvider.invalidatePrefix(`providers-list`)
-
+      await this.cacheProvider.invalidatePrefix(`providers-list`);
 
       return user;
-
     }
-
 
     return user;
   }
-
-
-
-
-
 }
 
 export default CreateUserService;

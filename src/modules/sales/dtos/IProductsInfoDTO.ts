@@ -1,5 +1,4 @@
 export default interface IProductInfoDTO {
-  product: string,
+  product: string;
   provider_id: string;
-
 }

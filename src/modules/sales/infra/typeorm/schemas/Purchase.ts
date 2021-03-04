@@ -1,10 +1,15 @@
-import { Exclude } from "class-transformer";
-import { ObjectID, Entity, Column, CreateDateColumn, UpdateDateColumn, ObjectIdColumn } from "typeorm";
-
+import { Exclude } from 'class-transformer';
+import {
+  ObjectID,
+  Entity,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ObjectIdColumn,
+} from 'typeorm';
 
 @Entity('purchase')
 class Purchase {
-
   @ObjectIdColumn()
   @Exclude()
   id: ObjectID;
@@ -12,16 +17,14 @@ class Purchase {
   @Column()
   transaction_id: string;
 
-
   @Column()
   provider_id: string;
-
 
   @Column({ default: 'avaliable' })
   status: 'avalieble' | 'canceled';
 
   @Column()
-  price: number
+  price: number;
 
   @Column()
   client_id: string;
@@ -37,10 +40,6 @@ class Purchase {
 
   @UpdateDateColumn()
   updated_at: Date;
-
-
-
 }
-
 
 export default Purchase;
