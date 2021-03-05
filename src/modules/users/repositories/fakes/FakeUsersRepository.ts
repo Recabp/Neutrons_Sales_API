@@ -7,8 +7,6 @@ import User from '../../infra/typeorm/entities/User';
 class FakeUsersRepository implements IUsersRepository {
   private users: User[] = [];
 
-  constructor() {}
-
   public async listProvider(): Promise<User[]> {
     const listProvider = this.users.filter(user => user.type === 'provider');
 

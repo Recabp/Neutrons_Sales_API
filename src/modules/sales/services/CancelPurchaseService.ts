@@ -65,7 +65,7 @@ class BuyService {
 
       Object.assign(findproduct, { status });
 
-      return await this.purchaseRepository.savePurchase(findproduct);
+      return this.purchaseRepository.savePurchase(findproduct);
     }
 
     const newquantity = matchproduct.quantity + quantity;
@@ -78,7 +78,7 @@ class BuyService {
 
     Object.assign(findproduct, { status });
 
-    return await this.purchaseRepository.savePurchase(findproduct);
+    return this.purchaseRepository.savePurchase(findproduct);
   }
 }
 

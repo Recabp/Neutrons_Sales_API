@@ -54,8 +54,8 @@ class BuyService {
       throw new AppError('unavaliable on stock', 401);
     }
 
-    const newquantity = matchproduct.quantity - quantity;
-    matchproduct.quantity = newquantity;
+    const attquantity = matchproduct.quantity - quantity;
+    matchproduct.quantity = attquantity;
 
     await this.stockRepository.save(matchproduct);
 

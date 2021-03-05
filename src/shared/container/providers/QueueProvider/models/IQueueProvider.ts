@@ -1,4 +1,4 @@
-export default interface IQeueProvider {
+export default interface IQueueProvider {
   start(): Promise<void>;
 
   publishOnQueue(queue: string, message: any): Promise<any>;

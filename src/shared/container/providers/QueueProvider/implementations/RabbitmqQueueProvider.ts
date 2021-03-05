@@ -1,27 +1,33 @@
 import AppError from '@shared/errors/AppError';
 import { Connection, Channel, connect, Message } from 'amqplib';
-import IQeueProvider from '../models/IQueueProvider';
+import IQueueProvider from '../models/IQueueProvider';
 
-export default class RabbitmqQueueProvider implements IQeueProvider {
+export default class RabbitmqQueueProvider implements IQueueProvider {
   private connect: Connection;
 
   private channel: Channel;
 
-  constructor(private url: string) {}
+  constructor() {
+    this.start().then(() => console.log('rabbitmq has been conected'));
+  }
 
-  async start(): Promise<void> {
-    this.connect = await connect(this.url);
+  public async start(): Promise<void> {
+    this.connect = await connect('amqp://localhost:5672');
     this.channel = await this.connect.createChannel();
   }
 
-  async publishOnQueue(queue: string, message: any) {
+  public async publishOnQueue(queue: string, message: any) {
+    this.channel.assertQueue(queue);
     return this.channel.sendToQueue(
       queue,
       Buffer.from(JSON.stringify(message)),
     );
   }
 
-  async consumeQueue(queue: string, callback: (massage: Message) => void) {
+  public async consumeQueue(
+    queue: string,
+    callback: (massage: Message) => void,
+  ) {
     return this.channel.consume(queue, message => {
       if (message === null) throw new AppError('invalide message content');
 
@@ -30,6 +36,3 @@ export default class RabbitmqQueueProvider implements IQeueProvider {
     });
   }
 }
-
-const server = new RabbitmqQueueProvider('amqp://localhost:5672');
-server.start();

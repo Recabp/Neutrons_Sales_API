@@ -42,12 +42,12 @@ class AddStockService {
       throw new AppError('invality imput');
     }
 
-    const matchproduct = await this.stockRepository.matchProduct({
+    const match = await this.stockRepository.matchProduct({
       product,
       provider_id,
     });
 
-    if (matchproduct === undefined) {
+    if (match === undefined) {
       const matchproduct = await this.stockRepository.addStock({
         product,
         quantity,
@@ -58,12 +58,12 @@ class AddStockService {
       return matchproduct;
     }
 
-    const newquantity = matchproduct.quantity + quantity;
-    matchproduct.quantity = newquantity;
+    const newquantity = match.quantity + quantity;
+    match.quantity = newquantity;
 
     await this.cacheProvider.invalidatePrefix(`stock-list`);
 
-    return this.stockRepository.save(matchproduct);
+    return this.stockRepository.save(match);
   }
 }
 

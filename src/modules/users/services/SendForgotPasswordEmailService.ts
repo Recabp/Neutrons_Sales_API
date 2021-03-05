@@ -50,7 +50,7 @@ class SendForgotPasswordEmailService {
 
     const bab = '4';
 
-    this.queueProvider.publishOnQueue('mail', bab);
+    await this.queueProvider.publishOnQueue('queue', bab);
   }
 }
 

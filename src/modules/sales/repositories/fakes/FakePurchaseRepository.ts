@@ -6,8 +6,6 @@ import Purchase from '../../infra/typeorm/schemas/Purchase';
 class FakePurchaseRepository implements IPurchaseRepository {
   private purchase: Purchase[] = [];
 
-  constructor() {}
-
   public async savePurchase(userData: IBuyDataDTO): Promise<Purchase> {
     const product = new Purchase();
 

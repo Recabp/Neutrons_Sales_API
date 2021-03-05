@@ -1,9 +1,9 @@
 import { container } from 'tsyringe';
 
-import IQeueProvider from './models/IQueueProvider';
+import IQueueProvider from './models/IQueueProvider';
 import RabbitmqQueueProvider from './implementations/RabbitmqQueueProvider';
 
-container.registerSingleton<IQeueProvider>(
+container.registerSingleton<IQueueProvider>(
   'QueueProvider',
   RabbitmqQueueProvider,
 );

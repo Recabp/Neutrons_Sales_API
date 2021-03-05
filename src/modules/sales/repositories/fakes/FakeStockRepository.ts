@@ -7,8 +7,6 @@ import Stock from '../../infra/typeorm/schemas/Stock';
 class FakeStockRepository implements IStockRepository {
   private stock: Stock[] = [];
 
-  constructor() {}
-
   public async addStock(userData: IProductDTO): Promise<Stock> {
     const product = new Stock();
 
