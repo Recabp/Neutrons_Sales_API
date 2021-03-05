@@ -51,6 +51,10 @@ class SendForgotPasswordEmailService {
     const bab = '4';
 
     await this.queueProvider.publishOnQueue('queue', bab);
+
+    await this.queueProvider.consumeQueue('queue', message =>
+      console.log(message.content.toString()),
+    );
   }
 }
 

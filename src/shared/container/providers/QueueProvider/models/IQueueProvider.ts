@@ -1,3 +1,5 @@
+import { Connection, Channel, connect, Message } from 'amqplib';
+
 export default interface IQueueProvider {
   start(): Promise<void>;
 
