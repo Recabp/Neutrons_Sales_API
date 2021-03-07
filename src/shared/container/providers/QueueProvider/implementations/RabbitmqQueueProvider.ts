@@ -1,5 +1,9 @@
+import SendForgotPasswordEmailServiceConsumer from '@modules/users/services/SendForgotPasswordEmailServiceConsumer';
 import AppError from '@shared/errors/AppError';
-import { Connection, Channel, connect, Message } from 'amqplib';
+import { Connection, Channel, connect, Replies } from 'amqplib';
+import { container } from 'tsyringe';
+import User from '@modules/users/infra/typeorm/entities/User';
+
 import IQueueProvider from '../models/IQueueProvider';
 
 export default class RabbitmqQueueProvider implements IQueueProvider {
@@ -8,7 +12,13 @@ export default class RabbitmqQueueProvider implements IQueueProvider {
   private channel: Channel;
 
   constructor() {
-    this.start().then(() => console.log('rabbitmq has been conected'));
+    this.start().then(() => {
+      console.log('rabbitmq has been conected');
+      this.channel.prefetch(1, true);
+      this.consumeMailQueue('MailQueue').then(() =>
+        console.log('Consumer has been started'),
+      );
+    });
   }
 
   public async start(): Promise<void> {
@@ -16,7 +26,10 @@ export default class RabbitmqQueueProvider implements IQueueProvider {
     this.channel = await this.connect.createChannel();
   }
 
-  public async publishOnQueue(queue: string, message: any) {
+  public async publishOnQueue(
+    queue: string,
+    message: string,
+  ): Promise<boolean> {
     this.channel.assertQueue(queue);
     return this.channel.sendToQueue(
       queue,
@@ -24,14 +37,20 @@ export default class RabbitmqQueueProvider implements IQueueProvider {
     );
   }
 
-  public async consumeQueue(
-    queue: string,
-    callback: (massage: Message) => void,
-  ) {
-    return this.channel.consume(queue, message => {
-      if (message === null) throw new AppError('invalide message content');
+  public async mailConsumer(user: User): Promise<void> {
+    const forgotPasswordControllerConsumer = container.resolve(
+      SendForgotPasswordEmailServiceConsumer,
+    );
+    await forgotPasswordControllerConsumer.run(user);
+  }
 
-      callback(message);
+  public async consumeMailQueue(queue: string): Promise<Replies.Consume> {
+    return this.channel.consume(queue, async message => {
+      if (message === null) throw new AppError('invalide message content');
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      const user = JSON.parse(message.content.toString());
+      await this.mailConsumer(user);
+
       this.channel.ack(message);
     });
   }
