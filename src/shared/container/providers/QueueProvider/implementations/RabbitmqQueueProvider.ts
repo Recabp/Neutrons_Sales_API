@@ -5,6 +5,7 @@ import { container } from 'tsyringe';
 import User from '@modules/users/infra/typeorm/entities/User';
 
 import IQueueProvider from '../models/IQueueProvider';
+import Message from '../dtos/IQueueDTOS';
 
 export default class RabbitmqQueueProvider implements IQueueProvider {
   private connect: Connection;
@@ -28,7 +29,7 @@ export default class RabbitmqQueueProvider implements IQueueProvider {
 
   public async publishOnQueue(
     queue: string,
-    message: string,
+    message: Message,
   ): Promise<boolean> {
     this.channel.assertQueue(queue);
     return this.channel.sendToQueue(
