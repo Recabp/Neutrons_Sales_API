@@ -1,10 +1,10 @@
+import User from '@modules/users/infra/typeorm/entities/User';
 import { Replies } from 'amqplib';
-import Message from '../dtos/IQueueDTOS';
 
 export default interface IQueueProvider {
   start(): Promise<void>;
 
-  publishOnQueue(queue: string, message: Message): Promise<boolean>;
+  publishOnQueue(queue: string, message: User): Promise<boolean>;
 
   consumeMailQueue(queue: string): Promise<Replies.Consume>;
 }

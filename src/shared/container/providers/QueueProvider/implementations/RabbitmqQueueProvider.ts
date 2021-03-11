@@ -5,7 +5,6 @@ import { container } from 'tsyringe';
 import User from '@modules/users/infra/typeorm/entities/User';
 
 import IQueueProvider from '../models/IQueueProvider';
-import Message from '../dtos/IQueueDTOS';
 
 export default class RabbitmqQueueProvider implements IQueueProvider {
   private connect: Connection;
@@ -27,10 +26,7 @@ export default class RabbitmqQueueProvider implements IQueueProvider {
     this.channel = await this.connect.createChannel();
   }
 
-  public async publishOnQueue(
-    queue: string,
-    message: Message,
-  ): Promise<boolean> {
+  public async publishOnQueue(queue: string, message: User): Promise<boolean> {
     this.channel.assertQueue(queue);
     return this.channel.sendToQueue(
       queue,
@@ -38,7 +34,7 @@ export default class RabbitmqQueueProvider implements IQueueProvider {
     );
   }
 
-  public async mailConsumer(user: User): Promise<void> {
+  private async mailConsumer(user: User): Promise<void> {
     const forgotPasswordControllerConsumer = container.resolve(
       SendForgotPasswordEmailServiceConsumer,
     );
