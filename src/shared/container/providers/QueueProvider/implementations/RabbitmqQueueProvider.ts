@@ -1,10 +1,9 @@
-import SendForgotPasswordEmailServiceConsumer from '@modules/users/services/SendForgotPasswordEmailServiceConsumer';
 import AppError from '@shared/errors/AppError';
 import { Connection, Channel, connect, Replies } from 'amqplib';
-import { container } from 'tsyringe';
 import User from '@modules/users/infra/typeorm/entities/User';
 
 import IQueueProvider from '../models/IQueueProvider';
+import Consumer from './ConsumeQueue';
 
 export default class RabbitmqQueueProvider implements IQueueProvider {
   private connect: Connection;
@@ -34,19 +33,12 @@ export default class RabbitmqQueueProvider implements IQueueProvider {
     );
   }
 
-  private async mailConsumer(user: User): Promise<void> {
-    const forgotPasswordControllerConsumer = container.resolve(
-      SendForgotPasswordEmailServiceConsumer,
-    );
-    await forgotPasswordControllerConsumer.run(user);
-  }
-
-  public async consumeMailQueue(queue: string): Promise<Replies.Consume> {
-    return this.channel.consume(queue, async message => {
+  public async consumeMailQueue(queue: string): Promise<void> {
+    this.channel.consume(queue, async message => {
       if (message === null) throw new AppError('invalide message content');
       await new Promise(resolve => setTimeout(resolve, 5000));
-      const user = JSON.parse(message.content.toString());
-      await this.mailConsumer(user);
+      const msg = JSON.parse(message.content.toString());
+      await Consumer.mailConsumer(msg);
 
       this.channel.ack(message);
     });

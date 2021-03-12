@@ -6,5 +6,5 @@ export default interface IQueueProvider {
 
   publishOnQueue(queue: string, message: User): Promise<boolean>;
 
-  consumeMailQueue(queue: string): Promise<Replies.Consume>;
+  consumeMailQueue(queue: string): Promise<void>;
 }
